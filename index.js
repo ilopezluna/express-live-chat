@@ -1,12 +1,21 @@
-import express from 'express';
-import { createServer } from 'http';
+const express = require('express');
+const http = require('http');
+const { Server } = require("socket.io");
 
 const app = express();
-const server = createServer(app);
+const server = http.createServer(app);
+const io = new Server(server);
 
-app.get('/', (req, res) => {
-    res.send('<h1>Hello world!</h1>');
+app.get('/', (req, res) => {    
+    res.sendFile(__dirname + '/views/index.html');
 });
+
+io.on('connection', (socket) => {
+    console.log('a user connected');
+    socket.on('disconnect', () => {
+        console.log('user disconnected');
+      });
+  });
 
 server.listen(3000, () => {
     console.log('listening on *:3000');
